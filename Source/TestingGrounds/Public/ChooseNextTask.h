@@ -18,4 +18,7 @@ class TESTINGGROUNDS_API UChooseNextTask : public UBTTaskNode
 private:
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
 	struct FBlackboardKeySelector IndexKey;
+
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+	struct FBlackboardKeySelector NextWaypoint;
 };
