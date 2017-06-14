@@ -3,7 +3,7 @@
 #include "TestingGrounds.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
-#include "PatrollingGuard.h"
+#include "PatrollingRoute.h"
 #include "ChooseNextTask.h"
 
 
@@ -15,8 +15,16 @@ EBTNodeResult::Type UChooseNextTask::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	
 	
 	// Get PatrolPoints from PatrollingGuard
-	auto AIPatrollingGuard = Cast<APatrollingGuard>(OwnerComp.GetAIOwner()->GetPawn());
-	auto PatrolPoints = AIPatrollingGuard->PatrolPoints;
+	auto AIPawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto AIPatrollingRoute = AIPawn->FindComponentByClass<UPatrollingRoute>();
+	if (!ensure(AIPatrollingRoute)) { return EBTNodeResult::Failed; }
+
+	auto PatrolPoints = AIPatrollingRoute->GetPatrolPoints();
+	if (PatrolPoints.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Patrol Points assigned to Patrol Route Component"))
+		return EBTNodeResult::Failed;
+	}
 
 	// Set the waypoint from PatrolPoints
 	BlackboardComp->SetValueAsObject(NextWaypoint.SelectedKeyName, PatrolPoints[Index]);
